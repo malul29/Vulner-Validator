@@ -1,4 +1,5 @@
 const axios = require('axios');
+const https = require('https');
 
 /**
  * Check HSTS (HTTP Strict Transport Security) header for a domain
@@ -13,12 +14,23 @@ async function checkHSTS(domain) {
             url = 'https://' + url;
         }
 
+        // Configure HTTPS agent for better compatibility with Vercel
+        const httpsAgent = new https.Agent({
+            rejectUnauthorized: false, // Allow self-signed certificates for testing
+            keepAlive: true,
+            timeout: 10000
+        });
+
         const response = await axios.get(url, {
             maxRedirects: 5,
             timeout: 10000,
             validateStatus: () => true, // Accept any status code
+            httpsAgent: httpsAgent,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive'
             }
         });
 

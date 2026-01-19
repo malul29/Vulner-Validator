@@ -73,6 +73,50 @@ app.get('/api/check-hsts/:domain', async (req, res) => {
     }
 });
 
+// Debug endpoint to check raw response headers
+app.get('/api/debug/:domain', async (req, res) => {
+    try {
+        const axios = require('axios');
+        const https = require('https');
+        const domain = req.params.domain;
+
+        let url = domain;
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+
+        const httpsAgent = new https.Agent({
+            rejectUnauthorized: false,
+            keepAlive: true,
+            timeout: 10000
+        });
+
+        const response = await axios.get(url, {
+            maxRedirects: 5,
+            timeout: 10000,
+            validateStatus: () => true,
+            httpsAgent: httpsAgent,
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
+
+        res.json({
+            domain: domain,
+            status: response.status,
+            headers: response.headers,
+            environment: process.env.VERCEL ? 'Vercel' : 'Local',
+            nodeVersion: process.version
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            stack: error.stack
+        });
+    }
+});
+
 // Validate multiple domains (batch processing)
 app.post('/api/validate', async (req, res) => {
     try {
