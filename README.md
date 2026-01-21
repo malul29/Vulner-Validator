@@ -104,6 +104,53 @@ To change the port, set the `PORT` environment variable:
 PORT=8080 npm start
 ```
 
+## 🚀 Deployment
+
+This application can be deployed to various platforms:
+
+### 🐳 Docker (Recommended)
+Containerized deployment for maximum portability and consistency.
+
+```bash
+# Build and run with Docker Compose
+docker compose up -d
+
+# Or with Docker directly
+docker build -t vulner-validator .
+docker run -d -p 3000:3000 vulner-validator
+```
+
+📖 **Full guide:** [`DEPLOY_DOCKER.md`](DEPLOY_DOCKER.md)
+
+### ☁️ Heroku
+Easy cloud deployment with automatic SSL.
+
+```bash
+heroku create
+git push heroku main
+heroku open
+```
+
+📖 **Full guide:** [`DEPLOY_HEROKU.md`](DEPLOY_HEROKU.md)
+
+### 🖥️ VPS (Linux)
+Deploy on your own VPS with PM2 and Nginx.
+
+```bash
+git clone https://github.com/malul29/Vulner-Validator.git
+cd Vulner-Validator
+npm install --production
+pm2 start ecosystem.config.js
+```
+
+📖 **Full guide:** [`DEPLOY_VPS.md`](DEPLOY_VPS.md)
+
+**Choose based on your needs:**
+- **Docker** → Maximum portability, run anywhere
+- **Heroku** → Fastest setup, free tier available
+- **VPS** → Full control, cost-effective for production
+
+
 ## Security Checks
 
 ### SSL Certificate
